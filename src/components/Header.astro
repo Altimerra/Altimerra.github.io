@@ -1,0 +1,114 @@
+---
+const navItems = [
+	{ label: "Home", href: "#home" },
+	{ label: "About", href: "#about" },
+	{ label: "Projects", href: "#projects" },
+	{ label: "Contact", href: "#contact" },
+];
+---
+
+<header class="header">
+	<nav class="container nav-container">
+		<a href="#" class="logo text-gradient">Harindu</a>
+		
+		<ul class="nav-links">
+			{
+				navItems.map((item) => (
+					<li>
+						<a href={item.href} class="nav-link">{item.label}</a>
+					</li>
+				))
+			}
+		</ul>
+
+		<button class="mobile-menu-btn" aria-label="Menu">
+			<span class="bar"></span>
+			<span class="bar"></span>
+			<span class="bar"></span>
+		</button>
+	</nav>
+</header>
+
+<style>
+	.header {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		z-index: 1000;
+		padding: 1rem 0;
+		background: rgba(10, 10, 10, 0.5);
+		backdrop-filter: blur(10px);
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.nav-container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.logo {
+		font-size: 1.5rem;
+		font-weight: 700;
+		letter-spacing: -0.5px;
+	}
+
+	.nav-links {
+		display: flex;
+		gap: 2rem;
+		list-style: none;
+	}
+
+	.nav-link {
+		font-size: 0.95rem;
+		color: var(--color-text-muted);
+		font-weight: 500;
+		position: relative;
+	}
+
+	.nav-link:hover {
+		color: var(--color-text);
+	}
+
+	.nav-link::after {
+		content: '';
+		position: absolute;
+		bottom: -4px;
+		left: 0;
+		width: 0;
+		height: 2px;
+		background: var(--gradient-main);
+		transition: width 0.3s ease;
+	}
+
+	.nav-link:hover::after {
+		width: 100%;
+	}
+
+	.mobile-menu-btn {
+		display: none;
+		background: none;
+		border: none;
+		cursor: pointer;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.bar {
+		width: 24px;
+		height: 2px;
+		background: var(--color-text);
+		transition: 0.3s ease;
+	}
+
+	@media (max-width: 768px) {
+		.nav-links {
+			display: none; /* Todo: Implement mobile menu toggle logic */
+		}
+
+		.mobile-menu-btn {
+			display: flex;
+		}
+	}
+</style>

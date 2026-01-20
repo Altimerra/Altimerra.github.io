@@ -1,0 +1,128 @@
+---
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = "Personal Portfolio" } = Astro.props;
+import Particles from '../components/Particles.astro';
+import ScrollObserver from '../components/ScrollObserver.astro';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		<title>{title}</title>
+	</head>
+	<body>
+		<Particles />
+		<div class="background-gradient"></div>
+		<slot />
+		<ScrollObserver />
+	</body>
+</html>
+<style is:global>
+	:root {
+		--color-bg: #0a0a0a;
+		--color-surface: #171717;
+		--color-primary: #3b82f6; /* Blue */
+		--color-secondary: #ef4444; /* Red */
+		--color-accent: #60a5fa; /* Lighter Blue */
+		--color-text: #fafafa;
+		--color-text-muted: #a3a3a3;
+		
+		--font-family: 'Outfit', sans-serif;
+		
+		--gradient-main: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+		--glass-bg: rgba(255, 255, 255, 0.05);
+		--glass-border: rgba(255, 255, 255, 0.1);
+		--glass-blur: 10px;
+	}
+
+	* {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0;
+	}
+
+	html {
+		font-family: var(--font-family);
+		background: var(--color-bg);
+		color: var(--color-text);
+		scroll-behavior: smooth;
+	}
+
+	body {
+		min-height: 100vh;
+		position: relative;
+		overflow-x: hidden;
+	}
+
+	.background-gradient {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -2; /* Behind particles */
+		background: 
+			radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.1), transparent 25%),
+			radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.1), transparent 25%);
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		line-height: 1.2;
+		font-weight: 700;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+		transition: color 0.2s ease;
+	}
+
+	button {
+		font-family: inherit;
+	}
+
+	/* Utility Classes */
+	.container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 0 1.5rem;
+	}
+
+	.glass-card {
+		background: var(--glass-bg);
+		backdrop-filter: blur(var(--glass-blur));
+		border: 1px solid var(--glass-border);
+		border-radius: 1rem;
+	}
+
+	.text-gradient {
+		background: var(--gradient-main);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	/* Scroll Animation Class */
+	.fade-in-up {
+		opacity: 0;
+		transform: translateY(30px);
+		transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+	}
+
+	.fade-in-up.visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
+</style>

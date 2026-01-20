@@ -1,0 +1,27 @@
+<script>
+	const observerOptions = {
+		root: null,
+		rootMargin: '0px',
+		threshold: 0.1
+	};
+
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(entry => {
+			if (entry.isIntersecting) {
+				entry.target.classList.add('visible');
+				observer.unobserve(entry.target); // Only animate once
+			}
+		});
+	}, observerOptions);
+
+	function setupObserver() {
+		const elements = document.querySelectorAll('.fade-in-up');
+		elements.forEach(el => observer.observe(el));
+	}
+
+	// Run on initial load
+	setupObserver();
+
+	// If using View Transitions (astro default often doesn't, but good practice)
+	document.addEventListener('astro:page-load', setupObserver);
+</script>

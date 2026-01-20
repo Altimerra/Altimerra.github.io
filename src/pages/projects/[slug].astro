@@ -1,0 +1,133 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { projects } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+---
+
+<Layout title={`${project.title} | Harindu Bandara`}>
+	<Header />
+	<main class="project-detail fade-in-up">
+		<div class="container">
+			<a href="/#projects" class="back-link">← Back to Projects</a>
+			
+			<div class="glass-card content-wrapper">
+				<div class="header-section">
+					<span class="year">{project.year}</span>
+					<h1 class="title">{project.title}</h1>
+					<div class="tags">
+						{project.tags.map((tag) => <span class="tag">{tag}</span>)}
+					</div>
+				</div>
+				
+				<div class="project-body" set:html={project.content} />
+			</div>
+		</div>
+	</main>
+	<Footer />
+</Layout>
+
+<style>
+	.project-detail {
+		padding-top: 120px;
+		padding-bottom: 80px;
+		min-height: 100vh;
+	}
+
+	.back-link {
+		display: inline-block;
+		margin-bottom: 2rem;
+		color: var(--color-accent);
+		font-weight: 500;
+	}
+
+	.back-link:hover {
+		text-decoration: underline;
+	}
+
+	.content-wrapper {
+		padding: 3rem;
+	}
+
+	.header-section {
+		margin-bottom: 3rem;
+		padding-bottom: 2rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.year {
+		font-family: monospace;
+		color: var(--color-secondary);
+		font-size: 1.1rem;
+	}
+
+	.title {
+		font-size: 3rem;
+		margin: 0.5rem 0 1.5rem 0;
+		line-height: 1.1;
+	}
+
+	.tags {
+		display: flex;
+		gap: 0.75rem;
+		flex-wrap: wrap;
+	}
+
+	.tag {
+		font-size: 0.9rem;
+		padding: 0.4rem 0.8rem;
+		background: rgba(56, 189, 248, 0.1);
+		color: var(--color-accent);
+		border-radius: 2rem;
+		border: 1px solid rgba(56, 189, 248, 0.2);
+	}
+
+	.project-body {
+		font-size: 1.1rem;
+		line-height: 1.8;
+		color: var(--color-text-muted);
+	}
+
+	/* Style injected HTML content */
+	.project-body :global(h3) {
+		color: var(--color-text);
+		font-size: 1.5rem;
+		margin: 2rem 0 1rem 0;
+	}
+
+	.project-body :global(p) {
+		margin-bottom: 1.5rem;
+	}
+
+	.project-body :global(ul) {
+		padding-left: 1.5rem;
+		margin-bottom: 1.5rem;
+	}
+
+	.project-body :global(li) {
+		margin-bottom: 0.5rem;
+	}
+
+	.project-body :global(strong) {
+		color: var(--color-text);
+	}
+
+	@media (max-width: 768px) {
+		.content-wrapper {
+			padding: 1.5rem;
+		}
+
+		.title {
+			font-size: 2rem;
+		}
+	}
+</style>

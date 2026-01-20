@@ -1,0 +1,178 @@
+<canvas id="particles-canvas"></canvas>
+
+<script>
+	class ParticleNetwork {
+		canvas: HTMLCanvasElement;
+		ctx: CanvasRenderingContext2D;
+		particles: Particle[];
+		mouse: { x: number; y: number };
+		resizeTimeout: number | undefined;
+
+		constructor() {
+			this.canvas = document.getElementById('particles-canvas') as HTMLCanvasElement;
+			this.ctx = this.canvas.getContext('2d')!;
+			this.particles = [];
+			this.mouse = { x: -1000, y: -1000 };
+			
+			this.init();
+			this.animate();
+			this.addEventListeners();
+		}
+
+		init() {
+			this.resize();
+			this.createParticles();
+		}
+
+		resize() {
+			this.canvas.width = window.innerWidth;
+			this.canvas.height = window.innerHeight;
+		}
+
+		createParticles() {
+			const particleCount = Math.min(Math.floor(window.innerWidth * window.innerHeight / 15000), 100);
+			this.particles = [];
+			for (let i = 0; i < particleCount; i++) {
+				this.particles.push(new Particle(this.canvas.width, this.canvas.height));
+			}
+		}
+
+		addEventListeners() {
+			window.addEventListener('resize', () => {
+				clearTimeout(this.resizeTimeout);
+				this.resizeTimeout = setTimeout(() => {
+					this.resize();
+					this.createParticles();
+				}, 100) as unknown as number;
+			});
+
+			window.addEventListener('mousemove', (e) => {
+				this.mouse.x = e.clientX;
+				this.mouse.y = e.clientY;
+			});
+		}
+
+		animate() {
+			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			
+			this.particles.forEach(particle => {
+				particle.update(this.mouse);
+				particle.draw(this.ctx);
+			});
+
+			this.drawConnections();
+			requestAnimationFrame(() => this.animate());
+		}
+
+		drawConnections() {
+			for (let i = 0; i < this.particles.length; i++) {
+				for (let j = i + 1; j < this.particles.length; j++) {
+					const dx = this.particles[i].x - this.particles[j].x;
+					const dy = this.particles[i].y - this.particles[j].y;
+					const distance = Math.sqrt(dx * dx + dy * dy);
+
+					// Longer connections for "graph" feel
+					if (distance < 180) {
+						this.ctx.beginPath();
+						// Cyan/Blue futuristic color
+						this.ctx.strokeStyle = `rgba(56, 189, 248, ${0.2 - distance / 180})`; 
+						this.ctx.lineWidth = 0.5;
+						this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+						this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+						this.ctx.stroke();
+					}
+				}
+			}
+		}
+	}
+
+	class Particle {
+		x: number;
+		y: number;
+		vx: number;
+		vy: number;
+		size: number;
+		baseColor: string;
+		originalX: number;
+		originalY: number;
+
+		constructor(width: number, height: number) {
+			this.x = Math.random() * width;
+			this.y = Math.random() * height;
+			// Almost static - "Barely move"
+			this.vx = (Math.random() - 0.5) * 0.05; 
+			this.vy = (Math.random() - 0.5) * 0.05;
+			this.size = Math.random() * 2 + 1;
+			this.baseColor = Math.random() > 0.5 ? '#60a5fa' : '#3b82f6';
+			this.originalX = this.x;
+			this.originalY = this.y;
+		}
+
+		update(mouse: { x: number; y: number }) {
+			// Base ambient movement
+			this.x += this.vx;
+			this.y += this.vy;
+
+			// Mouse interaction - "Barely move"
+			const dx = mouse.x - this.x;
+			const dy = mouse.y - this.y;
+			const distance = Math.sqrt(dx * dx + dy * dy);
+			const interactionRadius = 300; 
+
+			if (distance < interactionRadius) {
+				const forceDirectionX = dx / distance;
+				const forceDirectionY = dy / distance;
+				
+				// Extremely gentle force
+				const force = (interactionRadius - distance) / interactionRadius;
+				const repulsionStrength = 0.05; // Almost negligible interaction
+				
+				this.vx -= forceDirectionX * force * repulsionStrength;
+				this.vy -= forceDirectionY * force * repulsionStrength;
+			}
+
+			// Extreme Friction - practically stops them
+			this.vx *= 0.90;
+			this.vy *= 0.90;
+
+			// Boundary wrap
+			if (this.x < 0) this.x = window.innerWidth;
+			if (this.x > window.innerWidth) this.x = 0;
+			if (this.y < 0) this.y = window.innerHeight;
+			if (this.y > window.innerHeight) this.y = 0;
+		}
+
+		draw(ctx: CanvasRenderingContext2D) {
+			ctx.beginPath();
+			ctx.fillStyle = this.baseColor;
+			ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+			ctx.fill();
+		}
+	}
+
+	// Initialize only on client
+	document.addEventListener('astro:page-load', () => {
+		// Support for View Transitions if enabled, or just load
+		new ParticleNetwork();
+	});
+	
+	// Fallback for initial load if not using view transitions (standard behavior)
+	if (document.readyState === 'complete') {
+		new ParticleNetwork();
+	} else {
+		window.addEventListener('load', () => new ParticleNetwork());
+	}
+</script>
+
+<style>
+	#particles-canvas {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1; /* Behind content */
+		pointer-events: none; /* Allow clicking through */
+		opacity: 0.6;
+	}
+</style>

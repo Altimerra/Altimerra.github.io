@@ -1,0 +1,167 @@
+---
+const experiences = [
+	{
+		role: "Temporary Instructor",
+		company: "University of Moratuwa",
+		period: "2025",
+		location: "Katubedda, Sri Lanka",
+		description: [
+			"Designed and authored a new laboratory practical curriculum in Biosignal Processing.",
+			"Developed comprehensive educational materials to enhance student learning outcomes.",
+			"Conducted rigorous data collection using an optical Motion Capture system."
+		]
+	},
+	{
+		role: "Visiting Instructor",
+		company: "University of Moratuwa",
+		period: "2024",
+		location: "Katubedda, Sri Lanka",
+		description: [
+			"Conducted sessions for Faculty of Engineering and Faculty of Medicine.",
+			"Focused on Control Systems, ECG, and Op Amps."
+		]
+	},
+	{
+		role: "Design Engineer (Intern)",
+		company: "Arimac Lanka",
+		period: "2023",
+		location: "Kollupitiya, Sri Lanka",
+		description: [
+			"Worked in a team that designed the navigation and intelligence of the Diyazen robot.",
+			"Utilized ROS, Python, C++, and AI technologies."
+		]
+	}
+];
+---
+
+<section id="experience" class="experience fade-in-up">
+	<div class="container">
+		<h2 class="section-title">Professional <span class="text-gradient">Experience</span></h2>
+		
+		<div class="timeline">
+			{experiences.map((exp, index) => (
+				<div class="timeline-item glass-card">
+					<div class="timeline-dot"></div>
+					<div class="timeline-content">
+						<div class="experience-header">
+							<h3>{exp.role}</h3>
+							<span class="company">{exp.company}</span>
+						</div>
+						<div class="meta">
+							<span class="period">{exp.period}</span>
+							<span class="location">{exp.location}</span>
+						</div>
+						<ul class="description-list">
+							{exp.description.map(item => (
+								<li>{item}</li>
+							))}
+						</ul>
+					</div>
+				</div>
+			))}
+		</div>
+	</div>
+</section>
+
+<style>
+	.experience {
+		padding: 6rem 0;
+		background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(59, 130, 246, 0.05), rgba(0,0,0,0));
+	}
+
+	.section-title {
+		font-size: 2.5rem;
+		margin-bottom: 4rem;
+		text-align: center;
+	}
+
+	.timeline {
+		position: relative;
+		max-width: 800px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.timeline::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		height: 100%;
+		width: 2px;
+		background: var(--glass-border);
+		left: 20px; /* Offset for dot alignment */
+	}
+
+	.timeline-item {
+		margin-left: 3rem; /* Space for the line */
+		padding: 2rem;
+		position: relative;
+	}
+
+	.timeline-dot {
+		position: absolute;
+		left: -2.35rem; /* center on line at -3rem + margin? No, relative to item */
+		/* The item has margin-left: 3rem. 
+		   So relative to item content box, left: -3rem aligns with left edge of margin 
+		   Line is at left: 20px of parent. 
+		   Let's adjust.
+		*/
+		left: -42px; /* Visual tweaking */
+		top: 2.5rem;
+		width: 16px;
+		height: 16px;
+		background: var(--color-secondary);
+		border-radius: 50%;
+		box-shadow: 0 0 10px var(--color-secondary);
+		z-index: 1;
+	}
+
+	.experience-header h3 {
+		font-size: 1.4rem;
+		color: var(--color-text);
+		margin-bottom: 0.25rem;
+	}
+
+	.company {
+		font-size: 1.1rem;
+		color: var(--color-primary);
+		font-weight: 500;
+	}
+
+	.meta {
+		display: flex;
+		gap: 1rem;
+		margin: 0.5rem 0 1rem 0;
+		font-size: 0.9rem;
+		color: var(--color-text-muted);
+	}
+
+	.description-list {
+		list-style-position: inside;
+		color: var(--color-text-muted);
+		line-height: 1.6;
+	}
+
+	.description-list li {
+		margin-bottom: 0.5rem;
+	}
+
+	@media (max-width: 600px) {
+		.timeline::before {
+			left: 10px;
+		}
+		.timeline-item {
+			margin-left: 2rem;
+			padding: 1.5rem;
+		}
+		.timeline-dot {
+			left: -28px;
+			width: 12px;
+			height: 12px;
+			top: 1.8rem;
+		}
+	}
+</style>
