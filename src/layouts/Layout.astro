@@ -31,20 +31,28 @@ import ScrollObserver from '../components/ScrollObserver.astro';
 </html>
 <style is:global>
 	:root {
-		--color-bg: #0a0a0a;
-		--color-surface: #171717;
-		--color-primary: #3b82f6; /* Blue */
-		--color-secondary: #ef4444; /* Red */
-		--color-accent: #60a5fa; /* Lighter Blue */
-		--color-text: #fafafa;
-		--color-text-muted: #a3a3a3;
+		--color-bg: #010103; /* Almost Pure Black */
+		--color-surface: #0a0a0a; /* Deepest Grey */
+		--color-primary: #06b6d4; /* Cyan 500 */
+		--color-secondary: #3b82f6; /* Blue 500 */
+		--color-accent: #14b8a6; /* Teal 500 */
+		--color-text: #f8fafc; /* Slate 50 */
+		--color-text-muted: #94a3b8; /* Slate 400 */
 		
 		--font-family: 'Outfit', sans-serif;
 		
 		--gradient-main: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-		--glass-bg: rgba(255, 255, 255, 0.05);
-		--glass-border: rgba(255, 255, 255, 0.1);
-		--glass-blur: 10px;
+		--gradient-glow: radial-gradient(circle at center, rgba(6, 182, 212, 0.4) 0%, transparent 70%);
+		
+		/* Enhanced Glassmorphism for Dark Background */
+		--glass-bg: rgba(10, 10, 12, 0.7); /* Darker glass to match black bg */
+		--glass-border: rgba(148, 163, 184, 0.08);
+		--glass-highlight: rgba(255, 255, 255, 0.05);
+		--glass-blur: 20px;
+		--glass-shadow: 
+			0 4px 6px -1px rgba(0, 0, 0, 0.3),
+			0 2px 4px -1px rgba(0, 0, 0, 0.15),
+			inset 0 1px 0 0 rgba(255, 255, 255, 0.1); /* Inner rim light */
 	}
 
 	* {
@@ -72,10 +80,12 @@ import ScrollObserver from '../components/ScrollObserver.astro';
 		left: 0;
 		width: 100%;
 		height: 100%;
-		z-index: -2; /* Behind particles */
+		z-index: -2;
 		background: 
-			radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.1), transparent 25%),
-			radial-gradient(circle at 85% 30%, rgba(239, 68, 68, 0.1), transparent 25%);
+			radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.08), transparent 50%), /* Cyan glow */
+			radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 50%), /* Blue glow */
+			radial-gradient(circle at 50% 80%, rgba(20, 184, 166, 0.05), transparent 50%); /* Teal glow */
+		filter: blur(60px);
 	}
 
 	h1, h2, h3, h4, h5, h6 {
@@ -105,6 +115,14 @@ import ScrollObserver from '../components/ScrollObserver.astro';
 		backdrop-filter: blur(var(--glass-blur));
 		border: 1px solid var(--glass-border);
 		border-radius: 1rem;
+		box-shadow: var(--glass-shadow);
+		transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+	}
+
+	.glass-card:hover {
+		background: var(--glass-highlight);
+		border-color: var(--color-primary);
+		transform: translateY(-5px);
 	}
 
 	.text-gradient {

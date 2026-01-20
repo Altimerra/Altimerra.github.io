@@ -72,10 +72,10 @@
 					const distance = Math.sqrt(dx * dx + dy * dy);
 
 					// Longer connections for "graph" feel
-					if (distance < 180) {
+					if (distance < 200) {
 						this.ctx.beginPath();
-						// Cyan/Blue futuristic color
-						this.ctx.strokeStyle = `rgba(56, 189, 248, ${0.2 - distance / 180})`; 
+						// Teal/Cyan futuristic color - stronger opacity for visibility
+						this.ctx.strokeStyle = `rgba(20, 184, 166, ${0.3 - distance / 200})`; 
 						this.ctx.lineWidth = 0.5;
 						this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
 						this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
@@ -95,17 +95,40 @@
 		baseColor: string;
 		originalX: number;
 		originalY: number;
+		
+		// Twinkle properties
+		alpha: number;
+		alphaSpeed: number;
+		targetAlpha: number;
 
 		constructor(width: number, height: number) {
 			this.x = Math.random() * width;
 			this.y = Math.random() * height;
-			// Almost static - "Barely move"
-			this.vx = (Math.random() - 0.5) * 0.05; 
-			this.vy = (Math.random() - 0.5) * 0.05;
-			this.size = Math.random() * 2 + 1;
-			this.baseColor = Math.random() > 0.5 ? '#60a5fa' : '#3b82f6';
+			// Faster movement for dynamic graph changes
+			this.vx = (Math.random() - 0.5) * 0.2; 
+			this.vy = (Math.random() - 0.5) * 0.2;
+			// Slightly larger for glow effect visibility
+			this.size = Math.random() * 2 + 0.5;
+			
+			// Mix of Cyan, Sky Blue, and Bright White for "stars"
+			const rand = Math.random();
+			if (rand > 0.9) {
+				this.baseColor = '#ffffff'; // Bright white stars
+			} else if (rand > 0.6) {
+				this.baseColor = '#06b6d4'; // Cyan 500 (Primary)
+			} else if (rand > 0.3) {
+				this.baseColor = '#3b82f6'; // Blue 500 (Secondary)
+			} else {
+				this.baseColor = '#14b8a6'; // Teal 500 (Accent)
+			}
+			
 			this.originalX = this.x;
 			this.originalY = this.y;
+			
+			// Init twinkle
+			this.alpha = Math.random() * 0.5 + 0.5;
+			this.alphaSpeed = 0.01 + Math.random() * 0.02;
+			this.targetAlpha = Math.random();
 		}
 
 		update(mouse: { x: number; y: number }) {
@@ -113,27 +136,47 @@
 			this.x += this.vx;
 			this.y += this.vy;
 
+			// Random direction changes for "graph changing randomly" feel
+			if (Math.random() < 0.01) {
+				this.vx += (Math.random() - 0.5) * 0.05;
+				this.vy += (Math.random() - 0.5) * 0.05;
+			}
+			
+			// Speed limit
+			const maxSpeed = 0.5;
+			if (Math.abs(this.vx) > maxSpeed) this.vx *= 0.9;
+			if (Math.abs(this.vy) > maxSpeed) this.vy *= 0.9;
+
+			// Twinkle effect
+			if (Math.abs(this.alpha - this.targetAlpha) < 0.01) {
+				this.targetAlpha = Math.random() * 0.5 + 0.5; // New target between 0.5 and 1.0
+			}
+			if (this.alpha < this.targetAlpha) {
+				this.alpha += this.alphaSpeed;
+			} else {
+				this.alpha -= this.alphaSpeed;
+			}
+
 			// Mouse interaction - "Barely move"
 			const dx = mouse.x - this.x;
 			const dy = mouse.y - this.y;
 			const distance = Math.sqrt(dx * dx + dy * dy);
-			const interactionRadius = 300; 
+			const interactionRadius = 200; 
 
 			if (distance < interactionRadius) {
 				const forceDirectionX = dx / distance;
 				const forceDirectionY = dy / distance;
 				
-				// Extremely gentle force
 				const force = (interactionRadius - distance) / interactionRadius;
-				const repulsionStrength = 0.05; // Almost negligible interaction
+				const repulsionStrength = 0.05; 
 				
 				this.vx -= forceDirectionX * force * repulsionStrength;
 				this.vy -= forceDirectionY * force * repulsionStrength;
 			}
 
-			// Extreme Friction - practically stops them
-			this.vx *= 0.90;
-			this.vy *= 0.90;
+			// Friction
+			this.vx *= 0.95;
+			this.vy *= 0.95;
 
 			// Boundary wrap
 			if (this.x < 0) this.x = window.innerWidth;
@@ -144,9 +187,19 @@
 
 		draw(ctx: CanvasRenderingContext2D) {
 			ctx.beginPath();
+			ctx.globalAlpha = this.alpha; // Apply twinkle
 			ctx.fillStyle = this.baseColor;
+			
+			// Glow effect
+			ctx.shadowBlur = 10;
+			ctx.shadowColor = this.baseColor;
+			
 			ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 			ctx.fill();
+			
+			// Reset for other draws
+			ctx.shadowBlur = 0;
+			ctx.globalAlpha = 1;
 		}
 	}
 
